@@ -11,14 +11,14 @@ import java.net.Socket;
  */
 //TODO: Is this going to make extra threads in case of multiple users?
 public class Server{
-    int port = 9001;
+    int port = 8000;
     DataInputStream in;
     DataOutputStream out;
     ServerSocket server;
-    Socket socket;
+    Socket clientSocket;
 
     /**
-     *
+     * The constructor for the server setup
      */
     public Server(){
         try{
@@ -31,21 +31,57 @@ public class Server{
     }
 
     private void runServer(){
-        while(true){
-            try{
-                socket = server.accept();
-            }
-            catch(IOException e){
-                e.printStackTrace();
-            }
-
-            try{
-                in = new DataInputStream(socket.getInputStream());
-                out = new DataOutputStream(socket.getOutputStream());
-            }
-            catch(IOException e){
-                e.printStackTrace();
-            }
+        try{
+            clientSocket = server.accept();
+            in = new DataInputStream(clientSocket.getInputStream());
+            out = new DataOutputStream(clientSocket.getOutputStream());
+            System.out.println(in.readDouble());
+            out.writeDouble(100.2);
+        }
+        catch(IOException e){
+            e.printStackTrace();
         }
     }
+
+    //<editor-fold desc="Getters and setters">
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    public DataInputStream getIn() {
+        return in;
+    }
+
+    public void setIn(DataInputStream in) {
+        this.in = in;
+    }
+
+    public DataOutputStream getOut() {
+        return out;
+    }
+
+    public void setOut(DataOutputStream out) {
+        this.out = out;
+    }
+
+    public ServerSocket getServer() {
+        return server;
+    }
+
+    public void setServer(ServerSocket server) {
+        this.server = server;
+    }
+
+    public Socket getClientSocket() {
+        return clientSocket;
+    }
+
+    public void setClientSocket(Socket clientSocket) {
+        this.clientSocket = clientSocket;
+    }
+    //</editor-fold>
 }
