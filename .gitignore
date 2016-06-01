@@ -1,0 +1,13 @@
+#Eclipse files
+/bin/
+/.settings/
+.classpath
+.project
+
+#Intellij files
+.idea/
+*.iml
+out/
+
+#Overige files
+*.dll/
