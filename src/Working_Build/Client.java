@@ -1,32 +1,46 @@
-import sun.misc.IOUtils;
+package Working_Build;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.file.Files;
 
 /**
  * Created by hugo on 5/18/16.
  */
-public class Server {
+public class Client {
 
-    private static DataInputStream in;
-    private static byte[] data;
+    private DataInputStream in;
+    private DataOutputStream out;
+    private Socket socket;
+    private Gui gui;
 
-    public static void main(String s[]) throws IOException {
-        ServerSocket server = new ServerSocket(9001);
-        Socket socket = server.accept();
-        DataInputStream in = new DataInputStream(socket.getInputStream());
-        DataOutputStream out = new DataOutputStream(socket.getOutputStream());
+    public static void main(String s[]) throws IOException{
+        new Client();
+    }
 
+    public Client() throws IOException{
+        socket = new Socket("127.0.0.1", 9001);
+        in = new DataInputStream(socket.getInputStream());
+        out = new DataOutputStream(socket.getOutputStream());
+        gui = new Gui();
+        //int aNumber = Integer.parseInt(JOptionPane.showInputDialog("Gimme number"));
+        //out.writeDouble(aNumber);
+
+        //TODO gui sending requests
+        receiveImage();
+
+        out.close();
+        in.close();
+        socket.close();
+
+    }
+
+    private void receiveImage() throws IOException {
         int length = in.readInt();
         byte[] bytes = new byte[length];
         for(int i = 0; i < length; i++){
             bytes[i] = (in.readByte());
-            System.out.println(bytes[i]);
         }
 
         BufferedImage bufferedImage=null;
@@ -42,6 +56,5 @@ public class Server {
         } else {
             System.out.println("Got nothin' cap'n");
         }
-
     }
 }

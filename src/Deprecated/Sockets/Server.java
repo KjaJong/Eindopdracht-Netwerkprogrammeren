@@ -1,4 +1,4 @@
-package Sockets;
+package Deprecated.Sockets;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
