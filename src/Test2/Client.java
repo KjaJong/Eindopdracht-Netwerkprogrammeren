@@ -22,6 +22,16 @@ public class Client {
         //int aNumber = Integer.parseInt(JOptionPane.showInputDialog("Gimme number"));
         //out.writeDouble(aNumber);
 
+        int filessize = in.readInt();
+        BufferedReader d = new BufferedReader(new InputStreamReader(in));
+        for(int i = 0; i < filessize; i++){
+            System.out.println(d.readLine());
+        }
+        //d.close();
+        String file = JOptionPane.showInputDialog("Which file do you want?");
+        PrintWriter pw = new PrintWriter(out, true);
+        pw.println(file);
+        //pw.close();
         receiveImage();
 
         out.close();

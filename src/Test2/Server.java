@@ -9,6 +9,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.util.ArrayList;
 
 /**
  * Created by hugo on 5/18/16.
@@ -39,6 +40,8 @@ class WorkerThread implements Runnable {
     protected Socket socket = null;
     protected DataInputStream in;
     protected DataOutputStream out;
+    private PrintWriter pw;
+    private ArrayList<String> files;
 
     public WorkerThread(Socket socket) {
         this.socket = socket;
@@ -50,7 +53,20 @@ class WorkerThread implements Runnable {
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
 
-            sendImage();
+            files = new ArrayList<String>();
+            walk("/home/hugo/Downloads/DankMemes");
+            out.writeInt(files.size());
+            pw = new PrintWriter(out, true);
+            for(int i = 0; i < files.size(); i++){
+                pw.println(files.get(i));
+            }
+            //pw.close();
+
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            String file = br.readLine();
+            //br = null;
+            System.out.println("Sending: " + file);
+            sendImage(file);
 
             out.close();
             in.close();
@@ -61,11 +77,11 @@ class WorkerThread implements Runnable {
 
     }
 
-    private void sendImage() {
+    private void sendImage(String file) {
         //YES, YES TERRY! SEND, THE IMAGE!!!
         BufferedImage image = null;
         try {
-            image = ImageIO.read(new File("/home/hugo/Desktop/Floral_Shoppe_Alt_Cover.jpg"));
+            image = ImageIO.read(new File(file));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -90,6 +106,27 @@ class WorkerThread implements Runnable {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    public void walk( String path ) throws IOException {
+        File root = new File( path );
+        File[] list = root.listFiles();
+
+        if (list == null){
+            return;
+        }
+
+        for ( File f : list ) {
+            if ( f.isDirectory() ) {
+                walk( f.getAbsolutePath() );
+                System.out.println( "Dir:" + f.getAbsoluteFile() );
+                files.add( "Dir:" + f.getAbsoluteFile() );
+            }
+            else {
+                System.out.println( "File:" + f.getAbsoluteFile() );
+                files.add( "File:" + f.getAbsoluteFile() );
+            }
         }
     }
 }
