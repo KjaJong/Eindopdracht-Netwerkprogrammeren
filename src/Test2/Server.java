@@ -20,7 +20,7 @@ public class Server {
     private static byte[] data;
     private Server server;
 
-    public Server() throws IOException {
+    public Server() {
 
     }
 
