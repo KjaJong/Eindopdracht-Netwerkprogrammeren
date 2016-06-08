@@ -124,8 +124,8 @@ class WorkerThread implements Runnable {
                 files.add( "Dir:" + f.getAbsoluteFile() );
             }
             else {
-                System.out.println( "File:" + f.getAbsoluteFile() );
-                files.add( "File:" + f.getAbsoluteFile() );
+                System.out.println( "" + f.getAbsoluteFile() );
+                files.add( "" + f.getAbsoluteFile() );
             }
         }
     }

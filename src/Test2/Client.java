@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Path;
+import java.util.ArrayList;
 
 /**
  * Created by hugo on 5/18/16.
@@ -24,13 +25,16 @@ public class Client {
 
         int filessize = in.readInt();
         BufferedReader d = new BufferedReader(new InputStreamReader(in));
+        ArrayList<String> files = new ArrayList<String>();
+        String file;
         for(int i = 0; i < filessize; i++){
-            System.out.println(d.readLine());
+            file = d.readLine();
+            System.out.println( (i+1) + ". " + file);
+            files.add(file);
         }
         //d.close();
-        String file = JOptionPane.showInputDialog("Which file do you want?");
         PrintWriter pw = new PrintWriter(out, true);
-        pw.println(file);
+        pw.println(files.get(Integer.parseInt(JOptionPane.showInputDialog("Which file do you want?"))-1));
         //pw.close();
         receiveImage();
 
