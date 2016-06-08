@@ -1,7 +1,8 @@
-package Test2;
+package Deprecated;
+
+import java.awt.*;
 
 import javax.swing.*;
-import java.awt.*;
 
 public class DankMemeViewer {
     public static JFrame frame;
