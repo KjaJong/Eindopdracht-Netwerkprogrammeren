@@ -74,7 +74,7 @@ class WorkerThread implements Runnable {
         //YES, YES TERRY! SEND, THE IMAGE!!!
         BufferedImage image = null;
         try {
-            image = ImageIO.read(new File("src/Resources/snaaaaake.jpg"));
+            image = ImageIO.read(new File("/home/hugo/Downloads/2a50a6de84db99fb075cacf498ea576791fc3bf5547528dbd444ea3dfe48abc7.jpg"));
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -40,12 +40,13 @@ public class Gui extends JPanel{
 
     private void initTitlePanel(){
         titlePanel = new JPanel();
-        Font font = new Font("Impact", Font.BOLD, 50);
-        JLabel label = new JLabel();
-        label.setText("GENERAL MEME DATABASE");
+        Font font = new Font("Times New Roman", Font.BOLD, 50);
+        JLabel label = new JLabel("Image and Text");
         label.setFont(font);
+        //label.setText("GENERAL MEME DATABASE");
+        //label.setVisible(true);
         titlePanel.add(label);
-        label.setVisible(true);
+
         add(titlePanel);
     }
 
@@ -120,10 +121,10 @@ public class Gui extends JPanel{
         springLayout.putConstraint(SpringLayout.SOUTH,titlePanel,0,SpringLayout.SOUTH,this);
         springLayout.putConstraint(SpringLayout.WEST,titlePanel,0,SpringLayout.EAST,buttonPanel);
 
-        springLayout.putConstraint(SpringLayout.NORTH,titlePanel,0,SpringLayout.NORTH,this);
-        springLayout.putConstraint(SpringLayout.EAST,titlePanel,0,SpringLayout.EAST,this);
-        springLayout.putConstraint(SpringLayout.SOUTH,titlePanel,0,SpringLayout.NORTH,titlePanel);
-        springLayout.putConstraint(SpringLayout.WEST,titlePanel,0,SpringLayout.EAST,buttonPanel);
+        springLayout.putConstraint(SpringLayout.NORTH,diaPanel,0,SpringLayout.NORTH,this);
+        springLayout.putConstraint(SpringLayout.EAST,diaPanel,0,SpringLayout.EAST,this);
+        springLayout.putConstraint(SpringLayout.SOUTH,diaPanel,0,SpringLayout.NORTH,titlePanel);
+        springLayout.putConstraint(SpringLayout.WEST,diaPanel,0,SpringLayout.EAST,buttonPanel);
     }
     //</editor-fold>
 }
