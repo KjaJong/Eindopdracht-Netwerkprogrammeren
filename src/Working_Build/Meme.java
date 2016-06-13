@@ -6,14 +6,13 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 
 /**
  * Created by Menno on 13-6-2016.
  */
 public class Meme implements Comparable<Meme>, java.io.Serializable{
 
-    private ArrayList<Categories> categories = new ArrayList<>();
+    private Categories categorie;
     private int rating;
     private byte[] image;
 
@@ -26,41 +25,22 @@ public class Meme implements Comparable<Meme>, java.io.Serializable{
             e.printStackTrace();
         }
         this.image = os.toByteArray();
-
-        categories.add(categorie);
+        this.categorie = categorie;
         this.rating = rating;
     }
 
-    protected void setAnotherCategorie(Categories categorie){
-        if(!categories.contains(categorie)){
-            categories.add(categorie);
-        }
-        else{
-            System.out.println("Yeah nope. Already got that one.");
-        }
-
-    }
-
-    protected void removeACategorie(Categories categorie){
-        if(categories.contains(categorie)){
-            categories.remove(categorie);
-        }
-        else{
-            System.out.println("Hey, stop removing non-existent stuff!");
-        }
-    }
     //<editor-fold desc="Auto generated code hiding spot">
     @Override
     public int compareTo(Meme o) {
-        return 0;
+        return this.rating - o.rating;
     }
 
-    public ArrayList<Categories> getCategories() {
-        return categories;
+    public Categories getCategorie() {
+        return categorie;
     }
 
-    public void setCategories(ArrayList<Categories> categories) {
-        this.categories = categories;
+    public void setCategorie(Categories categorie) {
+        this.categorie = categorie;
     }
 
     public int getRating() {

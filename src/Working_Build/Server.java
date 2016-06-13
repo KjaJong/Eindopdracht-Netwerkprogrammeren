@@ -1,12 +1,15 @@
 package Working_Build;
 
+import org.imgscalr.Scalr;
+
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by hugo on 5/18/16.
@@ -44,8 +47,6 @@ class WorkerThread implements Runnable {
     private ObjectOutputStream objOut;
     private ObjectInputStream objIn;
 
-    private ArrayList<String> files;
-
     public WorkerThread(Socket socket) {
         this.socket = socket;
         sockets[socketCounter] = socket;
@@ -71,7 +72,7 @@ class WorkerThread implements Runnable {
 
             while(serverOnline){
                 try{
-                    com = (Commands)objIn.readObject();
+                    com = (Commands) objIn.readObject();
                 }
                 catch(java.net.SocketException e){
                     Thread.currentThread().interrupt();
@@ -84,9 +85,25 @@ class WorkerThread implements Runnable {
 
                     case ACCESS: //Access the database by returning the what kind of image question
                         System.out.println("ACCESS");
+                        objOut.writeObject(getBrowser());
+                        String path = null;
+                        try {
+                            path = (String) objIn.readObject();
+                        } catch (ClassNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                        System.out.println("Attempting to send: " + path);
+                        objOut.writeObject(new Meme(ImageIO.read(new File(path)), Categories.TROLL, 0));
                         break;
                     case MODIFY: //Access the database modifier
                         System.out.println("MODIFY");
+                        try{
+                            ArrayList<String> paths = searchMeme(objIn.readUTF());
+                            objOut.writeObject(createMeme(paths));
+                        }
+                        catch(IOException e){
+                            e.printStackTrace();
+                        }
                         break;
                     case EXIT:
                         System.out.println("EXIT");
@@ -94,6 +111,7 @@ class WorkerThread implements Runnable {
                     case RICKROLL:
                         try{
                             objOut.writeObject(new Meme(ImageIO.read(new File("src/Resources/Rickrolls.jpg")), Categories.TROLL, 0));
+                            System.out.println("Sending rickroll.");
                         }
                         catch (IOException e){
                             e.printStackTrace();
@@ -103,7 +121,7 @@ class WorkerThread implements Runnable {
 
                 }
             }
-            socket.close();
+            //socket.close();
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -111,13 +129,24 @@ class WorkerThread implements Runnable {
 
     }
 
-    private void searchMeme(String path) throws IOException{
+    public ArrayList<Thumbnail> getBrowser() throws IOException {
+        ArrayList<String> files = searchMeme("src/Resources/");
+        Collections.sort(files); //Sorts the meme on ratings
+        Collections.reverse(files);//Sets the highest rating first
+        ArrayList<Thumbnail> thumbnails = new ArrayList<Thumbnail>();
+        for(int i = 0; i < files.size(); i++){
+            thumbnails.add(new Thumbnail(new ImageIcon(Scalr.resize(ImageIO.read(new File(files.get(i))), 150)), files.get(i)));
+        }
+        return thumbnails;
+    }
+
+    private ArrayList<String> searchMeme(String path) throws IOException{
         File root = new File( path );
         File[] list = root.listFiles();
-        files = new ArrayList();
+        ArrayList<String> files = new ArrayList<>();
 
         if (list == null){
-            return;
+            return null;
         }
 
         for ( File f : list ) {
@@ -131,6 +160,7 @@ class WorkerThread implements Runnable {
                 files.add( "" + f.getAbsoluteFile() );
             }
         }
+        return files;
     }
 
     private void sendImage() {
@@ -177,5 +207,16 @@ class WorkerThread implements Runnable {
         else{
             System.out.println("The first meme comes after the second meme in natural order.");
         }
+    }
+
+    private ArrayList<Meme> createMeme(ArrayList<String> paths) throws IOException {
+        ArrayList<Meme> memes = new ArrayList<>();
+
+        for(String path:paths){
+            Meme meme = new Meme(ImageIO.read(new File(path)), Categories.randomCategorie(), (int)(Math.random()*1000));
+            memes.add(meme);
+        }
+
+        return memes;
     }
 }
