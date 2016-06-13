@@ -107,13 +107,22 @@ class WorkerThread implements Runnable {
                         break;
                     case MODIFY: //Access the database modifier
                         System.out.println("MODIFY");
-                        try{
+                        /*try{
+                            synchronized (this){
+                                try{
+                                    this.wait();
+                                }
+                                catch (InterruptedException i){
+                                    i.printStackTrace();
+                                }
+                            }
                             ArrayList<String> paths = searchMeme(objIn.readUTF());
+                            System.out.println("He, zie ik daar een ArrayList?");
                             objOut.writeObject(createMeme(paths));
                         }
                         catch(IOException e){
                             e.printStackTrace();
-                        }
+                        }*/
                         break;
                     case EXIT:
                         System.out.println("EXIT");
@@ -131,7 +140,6 @@ class WorkerThread implements Runnable {
 
                 }
             }
-            //socket.close();
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -171,52 +179,6 @@ class WorkerThread implements Runnable {
             }
         }
         return files;
-    }
-
-    private void sendImage() {
-        //YES, YES TERRY! SEND, THE IMAGE!!!
-        BufferedImage image = null;
-        try {
-            image = ImageIO.read(new File("src/Resources/Miku.jpg"));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        System.out.println("I'm firin' mah byte stream!");
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        try {
-            ImageIO.write(image, "JPG", os);
-            os.flush();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        byte[] bytes = os.toByteArray();
-
-        System.out.println(bytes.length);
-        try {
-            out.writeInt(bytes.length);
-            for (int i = 0; i < bytes.length; i++) {
-                out.writeByte(bytes[i]);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void compareNatural(Meme meme1, Meme meme2){
-        int result = meme1.compareTo(meme2);
-
-        if(result > 0){
-            System.out.println("The first meme comes for the second meme in natural order.");
-        }
-        else if(result == 0){
-            System.out.println("The first meme is in the same place as the second meme in natural order.");
-        }
-        else{
-            System.out.println("The first meme comes after the second meme in natural order.");
-        }
     }
 
     private ArrayList<Meme> createMeme(ArrayList<String> paths) throws IOException {

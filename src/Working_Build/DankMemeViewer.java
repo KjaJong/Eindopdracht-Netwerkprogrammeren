@@ -25,20 +25,6 @@ public class DankMemeViewer {
         JPanel panel = new DankMemePanel();
         frame.setPreferredSize(new Dimension(width, height));
         frame.getContentPane().add(panel);
-
-        /**
-        BufferedImage image = null;
-        try
-        {
-            image = ImageIO.read(new File("/home/hugo/Downloads/dank_meme.jpg"));
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        **/
-
         frame.getContentPane().add(new JLabel(new ImageIcon(img)));
         frame.pack();
         frame.setVisible(true);

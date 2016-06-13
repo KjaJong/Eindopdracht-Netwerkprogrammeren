@@ -32,8 +32,6 @@ public class Gui extends JPanel{
 
     public Gui(Client client) throws IOException {
         this.client = client;
-        //in = client.getIn();
-        //out = client.getOut();
         this.socket = client.socket;
         guiFrame = new JFrame("Meme database");
         guiFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -61,9 +59,6 @@ public class Gui extends JPanel{
 
     private void initTitlePanel(){
         titlePanel = new JPanel();
-        //Font font = new Font("Times New Roman", Font.BOLD, 50);
-        //JLabel label = new JLabel("Image and Text");
-        //label.setFont(font);
 
         try {
             titlePanel.add(new JLabel(new ImageIcon(retrieveImage())));
@@ -139,17 +134,26 @@ public class Gui extends JPanel{
 
         searchButton.addActionListener(e ->{
             try {
-                //socket.close();
                 sendCommand(Commands.MODIFY);
                 String categorie = JOptionPane.showInputDialog(null, "What categorie would you like to search for?", "Search by categorie",
                         JOptionPane.QUESTION_MESSAGE);
+                synchronized (this){
+                    this.notify();
+                }
                 objOut.writeUTF(categorie);
                 ArrayList<Meme> memesFound = (ArrayList<Meme>)objIn.readObject();
-                JOptionPane.showMessageDialog(null, "Found: " + memesFound.size() + "memes within the specified categorie." + '\n' + "Now showing all the meme's found.",
-                        "Search result", JOptionPane.INFORMATION_MESSAGE);
-                memesFound.forEach(Meme -> {
-                    DankMemeViewer dankMemeViewer = new DankMemeViewer(Meme.getImage(), Meme.getImage().getWidth(), Meme.getImage().getHeight());
-                });
+
+                if(memesFound.size() > 0){
+                    JOptionPane.showMessageDialog(null, "Found: " + memesFound.size() + "memes within the specified categorie." + '\n' + "Now showing all the meme's found.",
+                            "Search result", JOptionPane.INFORMATION_MESSAGE);
+                    memesFound.forEach(Meme -> {
+                        DankMemeViewer dankMemeViewer = new DankMemeViewer(Meme.getImage(), Meme.getImage().getWidth(), Meme.getImage().getHeight());
+                    });
+                }
+                else{
+                    JOptionPane.showMessageDialog(null, "Found: " + memesFound.size() + "memes within the specified categorie." + '\n' + "There are no meme's to show.",
+                            "Search result", JOptionPane.INFORMATION_MESSAGE);
+                }
             }
             catch(IOException|ClassNotFoundException ex){
                 ex.printStackTrace();
@@ -195,11 +199,7 @@ public class Gui extends JPanel{
     //</editor-fold>
 
     private void sendCommand(Commands commands) throws IOException{
-        //ObjectOutputStream command = new ObjectOutputStream(socket.getOutputStream());
-        //command.flush();
-        //initObjectStream();
         objOut.writeObject(commands);
-        //objOut.close();
     }
 
     private void initObjectStream() throws IOException {
