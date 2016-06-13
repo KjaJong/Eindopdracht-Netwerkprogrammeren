@@ -2,10 +2,8 @@ package Working_Build;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.net.Socket;
 
 /**
  * Created by Menno on 8-6-2016.
@@ -19,12 +17,16 @@ public class Gui extends JPanel{
     private Client client;
     private DataInputStream in;
     private DataOutputStream out;
+    private Socket socket;
+    private ObjectOutputStream objOut;
 
 
-    public Gui(Client client){
+    public Gui(Client client) throws IOException {
         this.client = client;
-        in = client.getIn();
-        out = client.getOut();
+        //in = client.getIn();
+        //out = client.getOut();
+        this.socket = client.socket;
+        initObjectStream();
         guiFrame = new JFrame("Meme database");
         guiFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         guiFrame.setSize(new Dimension(640, 480));
@@ -88,7 +90,7 @@ public class Gui extends JPanel{
         exitButton.setHorizontalTextPosition(JButton.CENTER);
         exitButton.setVerticalTextPosition(JButton.CENTER);
 
-        JButton mysteryButton = new JButton("Dunno, this probably makes you a sandwich or something.", new ImageIcon("src/Resources/Miku.jpg"));
+        JButton mysteryButton = new JButton("Not a rick roll.", new ImageIcon("src/Resources/Miku.jpg"));
         mysteryButton.setFont(new Font("Arial", Font.PLAIN, 20));
         mysteryButton.setForeground(Color.white);
         mysteryButton.setHorizontalTextPosition(JButton.CENTER);
@@ -96,12 +98,7 @@ public class Gui extends JPanel{
 
         startButton.addActionListener(e -> {
             try{
-                OutputStream sendCommand = out;
-                ObjectOutputStream command = new ObjectOutputStream(sendCommand);
-                command.flush();
-                command.writeObject(Commands.ACCESS);
-                command.close();
-                sendCommand.close();
+                sendCommand(Commands.ACCESS);
             }
             catch(Exception ex){
                 ex.printStackTrace();
@@ -110,11 +107,7 @@ public class Gui extends JPanel{
 
         editButton.addActionListener(e -> {
             try{
-                OutputStream sendCommand = out;
-                ObjectOutputStream command = new ObjectOutputStream(sendCommand);
-                command.writeObject(Commands.MODIFY);
-                command.close();
-                sendCommand.close();
+                sendCommand(Commands.MODIFY);
             }
             catch(Exception ex){
                 ex.printStackTrace();
@@ -123,11 +116,7 @@ public class Gui extends JPanel{
 
         exitButton.addActionListener(e ->{
             try{
-                OutputStream sendCommand = out;
-                ObjectOutputStream command = new ObjectOutputStream(sendCommand);
-                command.writeObject(Commands.EXIT);
-                command.close();
-                sendCommand.close();
+                sendCommand(Commands.EXIT);
             }
             catch(Exception ex){
                 ex.printStackTrace();
@@ -136,11 +125,7 @@ public class Gui extends JPanel{
 
         mysteryButton.addActionListener(e -> {
             try{
-                OutputStream sendCommand = out;
-                ObjectOutputStream command = new ObjectOutputStream(sendCommand);
-                command.writeObject(Commands.RICKROLL);
-                command.close();
-                sendCommand.close();
+                sendCommand(Commands.RICKROLL);
             }
             catch(Exception ex){
                 ex.printStackTrace();
@@ -173,4 +158,17 @@ public class Gui extends JPanel{
         springLayout.putConstraint(SpringLayout.WEST,diaPanel,0,SpringLayout.EAST,buttonPanel);
     }
     //</editor-fold>
+
+    private void sendCommand(Commands commands) throws IOException{
+        //ObjectOutputStream command = new ObjectOutputStream(socket.getOutputStream());
+        //command.flush();
+        //initObjectStream();
+        objOut.writeObject(commands);
+        //objOut.close();
+    }
+
+    private void initObjectStream() throws IOException {
+        objOut = new ObjectOutputStream(socket.getOutputStream());
+        objOut.flush();
+    }
 }

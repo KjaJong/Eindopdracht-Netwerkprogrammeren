@@ -1,7 +1,6 @@
 package Working_Build;
 
 import javax.imageio.ImageIO;
-import java.awt.im.InputContext;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.ServerSocket;
@@ -57,59 +56,47 @@ class WorkerThread implements Runnable {
     @Override
     public void run() {
         try {
-            //in = new DataInputStream(socket.getInputStream());
-            //out = new DataOutputStream(socket.getOutputStream());
-
             objOut = new ObjectOutputStream(socket.getOutputStream());
             objOut.flush();
 
-            objOut.writeObject(new Meme(ImageIO.read(new File("/home/hugo/Downloads/2a50a6de84db99fb075cacf498ea576791fc3bf5547528dbd444ea3dfe48abc7.jpg"))));
-
             objIn = new ObjectInputStream(socket.getInputStream());
-            /**
-            try {
-                SimpleObject simpleObject = (SimpleObject) objIn.readObject();
-                System.out.println("The meaning of life is: " + simpleObject.getTheMeaningOfLife());
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-            **/
-            /**
+
             Commands com = null;
 
             while(serverOnline){
                 try{
                     com = (Commands)objIn.readObject();
                 }
-                catch(Exception e){
-                    e.printStackTrace();
+                catch(java.net.SocketException e){
+                    Thread.currentThread().interrupt();
+                    return;
+                } catch(ClassNotFoundException f){
+                    f.printStackTrace();
                 }
 
                 switch(com){
-                    case ACCESS:
-                        searchMeme("/home/hugo/Downloads/DankMemes");
-                        sendImage();//TODO let the user search a meme
+
+                    case ACCESS: //Access the database by returning the what kind of image question
+                        System.out.println("ACCESS");
                         break;
-                    case MODIFY:
-                        //TODO let the user modify a meme
+                    case MODIFY: //Access the database modifier
+                        System.out.println("MODIFY");
                         break;
                     case EXIT:
-                        //TODO shutdown client who called exit
+                        System.out.println("EXIT");
                         break;
                     case RICKROLL:
-                        //Send rickrolls picture.
-                        break;
-                    default:
-                        System.out.println("You really shouldn't be here. Probably shot a null value or something.");
+                        try{
+                            objOut.writeObject(new Meme(ImageIO.read(new File("src/Resources/Rickrolls.jpg")), Categories.TROLL, 0));
+                        }
+                        catch (IOException e){
+                            e.printStackTrace();
+                        }
+                        System.out.println("Never gonna give you up, never gonna let you down, never gonna run around and hurt you.");
                         break;
 
                 }
             }
-            out.close();
-            in.close();
-
-            }
-            **/
             socket.close();
         }
         catch (IOException e) {
