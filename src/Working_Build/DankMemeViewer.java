@@ -21,7 +21,7 @@ public class DankMemeViewer {
     public static void main()
     {
         frame = new JFrame("Dank Meme Viewer");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         JPanel panel = new DankMemePanel();
         frame.setPreferredSize(new Dimension(width, height));
         frame.getContentPane().add(panel);
