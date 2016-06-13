@@ -23,7 +23,7 @@ public class Client {
         socket = new Socket("127.0.0.1", 9001);
         in = new DataInputStream(socket.getInputStream());
         out = new DataOutputStream(socket.getOutputStream());
-        gui = new Gui();
+        gui = new Gui(this);
         //int aNumber = Integer.parseInt(JOptionPane.showInputDialog("Gimme number"));
         //out.writeDouble(aNumber);
 
@@ -56,5 +56,13 @@ public class Client {
         } else {
             System.out.println("Got nothin' cap'n");
         }
+    }
+
+    public DataInputStream getIn() {
+        return in;
+    }
+
+    public DataOutputStream getOut() {
+        return out;
     }
 }

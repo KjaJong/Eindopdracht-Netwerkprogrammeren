@@ -1,6 +1,7 @@
 package Working_Build;
 
 import javax.imageio.ImageIO;
+import java.awt.im.InputContext;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.ServerSocket;
@@ -54,11 +55,32 @@ class WorkerThread implements Runnable {
         try {
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
+            InputStream commandInput = in;
+            ObjectInputStream command = new ObjectInputStream(commandInput);
+            Commands com = null;
 
-            /*while(serverOnline){
-                //TODO listen for request from the gui
-            }*/
-            sendImage();
+            while(serverOnline){
+                try{
+                    com = (Commands)command.readObject();
+                }
+                catch(Exception e){
+                    e.printStackTrace();
+                }
+
+                switch(com){
+                    case ACCESS: //Access the database by returning the what kind of image question
+                        break;
+                    case MODIFY: //Access the database modifier
+                        break;
+                    case EXIT: //TODO shutdown client who called exit
+                        break;
+                    case RICKROLL: //Send rickrolls picture.
+                        break;
+                    default: System.out.println("You really shouldn't be here. Probably shot a null value or something.");
+                        break;
+                }
+            }
+            //sendImage();
 
             out.close();
             in.close();

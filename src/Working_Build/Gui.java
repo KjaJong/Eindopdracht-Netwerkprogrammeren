@@ -2,6 +2,10 @@ package Working_Build;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 
 /**
  * Created by Menno on 8-6-2016.
@@ -12,10 +16,15 @@ public class Gui extends JPanel{
     private JPanel titlePanel;
     private JPanel buttonPanel;
     private JPanel diaPanel;
+    private Client client;
+    private DataInputStream in;
+    private DataOutputStream out;
 
 
-
-    public Gui(){
+    public Gui(Client client){
+        this.client = client;
+        in = client.getIn();
+        out = client.getOut();
         guiFrame = new JFrame("Meme database");
         guiFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         guiFrame.setSize(new Dimension(640, 480));
@@ -86,19 +95,55 @@ public class Gui extends JPanel{
         mysteryButton.setVerticalTextPosition(JButton.CENTER);
 
         startButton.addActionListener(e -> {
-            //TODO: send search request
+            try{
+                OutputStream sendCommand = out;
+                ObjectOutputStream command = new ObjectOutputStream(sendCommand);
+                command.writeObject(Commands.ACCESS);
+                command.close();
+                sendCommand.close();
+            }
+            catch(Exception ex){
+                ex.printStackTrace();
+            }
         });
 
         editButton.addActionListener(e -> {
-            //TODO: Send request to edit resources
+            try{
+                OutputStream sendCommand = out;
+                ObjectOutputStream command = new ObjectOutputStream(sendCommand);
+                command.writeObject(Commands.MODIFY);
+                command.close();
+                sendCommand.close();
+            }
+            catch(Exception ex){
+                ex.printStackTrace();
+            }
         });
 
         exitButton.addActionListener(e ->{
-            //TODO: Send exit request
+            try{
+                OutputStream sendCommand = out;
+                ObjectOutputStream command = new ObjectOutputStream(sendCommand);
+                command.writeObject(Commands.EXIT);
+                command.close();
+                sendCommand.close();
+            }
+            catch(Exception ex){
+                ex.printStackTrace();
+            }
         });
 
         mysteryButton.addActionListener(e -> {
-            //TODO: Send the rickrolls request
+            try{
+                OutputStream sendCommand = out;
+                ObjectOutputStream command = new ObjectOutputStream(sendCommand);
+                command.writeObject(Commands.RICKROLL);
+                command.close();
+                sendCommand.close();
+            }
+            catch(Exception ex){
+                ex.printStackTrace();
+            }
         });
         //</editor-fold>
 
