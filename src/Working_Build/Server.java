@@ -1,6 +1,9 @@
 package Working_Build;
 
+import org.imgscalr.Scalr;
+
 import javax.imageio.ImageIO;
+import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.ServerSocket;
@@ -43,6 +46,7 @@ class WorkerThread implements Runnable {
     private ObjectOutputStream objOut;
     private ObjectInputStream objIn;
 
+
     public WorkerThread(Socket socket) {
         this.socket = socket;
         sockets[socketCounter] = socket;
@@ -68,7 +72,7 @@ class WorkerThread implements Runnable {
 
             while(serverOnline){
                 try{
-                    com = (Commands)objIn.readObject();
+                    com = (Commands) objIn.readObject();
                 }
                 catch(java.net.SocketException e){
                     Thread.currentThread().interrupt();
@@ -81,6 +85,15 @@ class WorkerThread implements Runnable {
 
                     case ACCESS: //Access the database by returning the what kind of image question
                         System.out.println("ACCESS");
+                        objOut.writeObject(getBrowser());
+                        String path = null;
+                        try {
+                            path = (String) objIn.readObject();
+                        } catch (ClassNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                        System.out.println("Attempting to send: " + path);
+                        objOut.writeObject(new Meme(ImageIO.read(new File(path)), Categories.TROLL, 0));
                         break;
                     case MODIFY: //Access the database modifier
                         System.out.println("MODIFY");
@@ -91,6 +104,7 @@ class WorkerThread implements Runnable {
                     case RICKROLL:
                         try{
                             objOut.writeObject(new Meme(ImageIO.read(new File("src/Resources/Rickrolls.jpg")), Categories.TROLL, 0));
+                            System.out.println("Sending rickroll.");
                         }
                         catch (IOException e){
                             e.printStackTrace();
@@ -100,7 +114,7 @@ class WorkerThread implements Runnable {
 
                 }
             }
-            socket.close();
+            //socket.close();
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -108,13 +122,23 @@ class WorkerThread implements Runnable {
 
     }
 
-    private void searchMeme(String path) throws IOException{
+    public ArrayList<Thumbnail> getBrowser() throws IOException {
+        ArrayList<String> files = searchMeme("src/Resources/");
+        ArrayList<Thumbnail> thumbnails = new ArrayList<Thumbnail>();
+        for(int i = 0; i < files.size(); i++){
+            thumbnails.add(new Thumbnail(new ImageIcon(Scalr.resize(ImageIO.read(new File(files.get(i))), 150)), files.get(i)));
+        }
+
+        return thumbnails;
+    }
+
+    private ArrayList<String> searchMeme(String path) throws IOException{
         File root = new File( path );
         File[] list = root.listFiles();
-        files = new ArrayList();
+        ArrayList<String> files = new ArrayList<String>();
 
         if (list == null){
-            return;
+            return null;
         }
 
         for ( File f : list ) {
@@ -128,6 +152,7 @@ class WorkerThread implements Runnable {
                 files.add( "" + f.getAbsoluteFile() );
             }
         }
+        return files;
     }
 
     private void sendImage() {

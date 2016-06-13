@@ -1,10 +1,16 @@
 package Working_Build;
 
+import org.imgscalr.Scalr;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
+import java.nio.Buffer;
+import java.nio.file.Path;
+import java.util.ArrayList;
 
 /**
  * Created by Menno on 8-6-2016.
@@ -29,10 +35,10 @@ public class Gui extends JPanel{
         //in = client.getIn();
         //out = client.getOut();
         this.socket = client.socket;
-        initObjectStream();
         guiFrame = new JFrame("Meme database");
         guiFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         guiFrame.setSize(new Dimension(640, 480));
+        initObjectStream();
         initPanel();
         buttonImage = null;
         guiFrame.validate();
@@ -110,6 +116,41 @@ public class Gui extends JPanel{
         startButton.addActionListener(e -> {
             try{
                 sendCommand(Commands.ACCESS);
+
+                ArrayList<Thumbnail> thumbnails = (ArrayList<Thumbnail>) objIn.readObject();
+
+                JFrame browseFrame = new JFrame("World Meme Database");
+                JPanel browsePanel = new JPanel();
+                browsePanel.setLayout(new GridLayout(5, 5));
+
+
+                JButton[] buttons = new JButton[thumbnails.size()];
+                for(int i = 0; i < buttons.length; i++){
+                    buttons[i] = new JButton();
+                    buttons[i].setIcon(thumbnails.get(i).getThumbnail());
+                    int finalI = i;
+                    buttons[i].addActionListener(event ->{
+                        try{
+                            System.out.println("Image: " + thumbnails.get(finalI).getPath());
+                            objOut.writeObject(thumbnails.get(finalI).getPath());
+                            Meme meme = (Meme) objIn.readObject();
+
+                            DankMemeViewer dankMemeViewer = new DankMemeViewer(meme.getImage(), meme.getImage().getWidth(), meme.getImage().getHeight());
+                        }
+                        catch(Exception ex){
+                            ex.printStackTrace();
+                        }
+                    });
+                    browsePanel.add(buttons[i]);
+                }
+
+
+
+                browseFrame.add(browsePanel);
+                browseFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+                browseFrame.setSize(new Dimension(640, 480));
+                browseFrame.setVisible(true);
+
             }
             catch(Exception ex){
                 ex.printStackTrace();
@@ -127,7 +168,7 @@ public class Gui extends JPanel{
 
         exitButton.addActionListener(e ->{
             try{
-                socket.close();
+                //socket.close();
                 System.exit(0);
             }
             catch(Exception ex){
@@ -138,6 +179,8 @@ public class Gui extends JPanel{
         mysteryButton.addActionListener(e -> {
             try{
                 sendCommand(Commands.RICKROLL);
+                BufferedImage img = retrieveImage();
+                DankMemeViewer dankMemeViewer = new DankMemeViewer(img, img.getWidth(), img.getHeight());
             }
             catch(Exception ex){
                 ex.printStackTrace();
@@ -182,10 +225,11 @@ public class Gui extends JPanel{
     private void initObjectStream() throws IOException {
         objOut = new ObjectOutputStream(socket.getOutputStream());
         objOut.flush();
+
+        objIn = new ObjectInputStream(socket.getInputStream());
     }
 
     private BufferedImage retrieveImage() throws IOException {
-        objIn = new ObjectInputStream(socket.getInputStream());
         try {
             Meme meme = (Meme) objIn.readObject();
             return meme.getImage();

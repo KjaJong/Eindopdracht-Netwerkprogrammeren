@@ -30,9 +30,9 @@ public class Client {
         //TODO gui sending requests
         //receiveImage();
 
-        out.close();
-        in.close();
-        socket.close();
+        //out.close();
+        //in.close();
+        //socket.close();
 
     }
 
