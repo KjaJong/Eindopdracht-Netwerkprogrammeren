@@ -27,7 +27,6 @@ public class Client {
         //int aNumber = Integer.parseInt(JOptionPane.showInputDialog("Gimme number"));
         //out.writeDouble(aNumber);
 
-        //TODO gui sending requests
         receiveImage();
 
         out.close();

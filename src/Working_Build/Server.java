@@ -68,20 +68,23 @@ class WorkerThread implements Runnable {
                 }
 
                 switch(com){
-                    case ACCESS: //Access the database by returning the what kind of image question
+                    case ACCESS:
+                        sendImage();//TODO let the user search a meme
                         break;
-                    case MODIFY: //Access the database modifier
+                    case MODIFY:
+                        //TODO let the user modify a meme
                         break;
-                    case EXIT: //TODO shutdown client who called exit
+                    case EXIT:
+                        //TODO shutdown client who called exit
                         break;
-                    case RICKROLL: //Send rickrolls picture.
+                    case RICKROLL:
+                        //Send rickrolls picture.
                         break;
-                    default: System.out.println("You really shouldn't be here. Probably shot a null value or something.");
+                    default:
+                        System.out.println("You really shouldn't be here. Probably shot a null value or something.");
                         break;
                 }
             }
-            //sendImage();
-
             out.close();
             in.close();
             socket.close();
@@ -96,7 +99,7 @@ class WorkerThread implements Runnable {
         //YES, YES TERRY! SEND, THE IMAGE!!!
         BufferedImage image = null;
         try {
-            image = ImageIO.read(new File("/home/hugo/Downloads/2a50a6de84db99fb075cacf498ea576791fc3bf5547528dbd444ea3dfe48abc7.jpg"));
+            image = ImageIO.read(new File("src/Resources/Miku.jpg"));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -105,7 +108,7 @@ class WorkerThread implements Runnable {
         System.out.println("I'm firin' mah byte stream!");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         try {
-            ImageIO.write(image, "PNG", os);
+            ImageIO.write(image, "JPG", os);
             os.flush();
         } catch (IOException e) {
             e.printStackTrace();
@@ -121,6 +124,20 @@ class WorkerThread implements Runnable {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        }
+    }
+
+    private void compareNatural(Meme meme1, Meme meme2){
+        int result = meme1.compareTo(meme2);
+
+        if(result > 0){
+            System.out.println("The first meme comes for the second meme in natural order.");
+        }
+        else if(result == 0){
+            System.out.println("The first meme is in the same place as the second meme in natural order.");
+        }
+        else{
+            System.out.println("The first meme comes after the second meme in natural order.");
         }
     }
 }
