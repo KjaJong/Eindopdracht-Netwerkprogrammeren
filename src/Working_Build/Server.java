@@ -40,6 +40,9 @@ class WorkerThread implements Runnable {
     private int socketCounter = 0;
     protected boolean serverOnline = true;
 
+    private ObjectOutputStream objOut;
+    private ObjectInputStream objIn;
+
     public WorkerThread(Socket socket) {
         this.socket = socket;
         sockets[socketCounter] = socket;
@@ -53,15 +56,29 @@ class WorkerThread implements Runnable {
     @Override
     public void run() {
         try {
-            in = new DataInputStream(socket.getInputStream());
-            out = new DataOutputStream(socket.getOutputStream());
-            InputStream commandInput = in;
-            ObjectInputStream command = new ObjectInputStream(commandInput);
+            //in = new DataInputStream(socket.getInputStream());
+            //out = new DataOutputStream(socket.getOutputStream());
+
+            objOut = new ObjectOutputStream(socket.getOutputStream());
+            objOut.flush();
+
+            objOut.writeObject(new Meme(ImageIO.read(new File("/home/hugo/Downloads/2a50a6de84db99fb075cacf498ea576791fc3bf5547528dbd444ea3dfe48abc7.jpg"))));
+
+            objIn = new ObjectInputStream(socket.getInputStream());
+            /**
+            try {
+                SimpleObject simpleObject = (SimpleObject) objIn.readObject();
+                System.out.println("The meaning of life is: " + simpleObject.getTheMeaningOfLife());
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            **/
+            /**
             Commands com = null;
 
             while(serverOnline){
                 try{
-                    com = (Commands)command.readObject();
+                    com = (Commands)objIn.readObject();
                 }
                 catch(Exception e){
                     e.printStackTrace();
@@ -78,12 +95,11 @@ class WorkerThread implements Runnable {
                         break;
                     default: System.out.println("You really shouldn't be here. Probably shot a null value or something.");
                         break;
-                }
-            }
-            //sendImage();
 
-            out.close();
-            in.close();
+                }
+
+            }
+            **/
             socket.close();
         }
         catch (IOException e) {
