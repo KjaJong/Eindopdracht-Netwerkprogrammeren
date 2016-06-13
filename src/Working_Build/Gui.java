@@ -98,6 +98,7 @@ public class Gui extends JPanel{
             try{
                 OutputStream sendCommand = out;
                 ObjectOutputStream command = new ObjectOutputStream(sendCommand);
+                command.flush();
                 command.writeObject(Commands.ACCESS);
                 command.close();
                 sendCommand.close();

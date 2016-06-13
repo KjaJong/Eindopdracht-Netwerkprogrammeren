@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 /**
  * Created by hugo on 5/18/16.
@@ -40,6 +41,9 @@ class WorkerThread implements Runnable {
     private int socketCounter = 0;
     protected boolean serverOnline = true;
 
+    private ObjectOutputStream objOut;
+    private ObjectInputStream objIn;
+
     public WorkerThread(Socket socket) {
         this.socket = socket;
         sockets[socketCounter] = socket;
@@ -53,15 +57,29 @@ class WorkerThread implements Runnable {
     @Override
     public void run() {
         try {
-            in = new DataInputStream(socket.getInputStream());
-            out = new DataOutputStream(socket.getOutputStream());
-            InputStream commandInput = in;
-            ObjectInputStream command = new ObjectInputStream(commandInput);
+            //in = new DataInputStream(socket.getInputStream());
+            //out = new DataOutputStream(socket.getOutputStream());
+
+            objOut = new ObjectOutputStream(socket.getOutputStream());
+            objOut.flush();
+
+            objOut.writeObject(new Meme(ImageIO.read(new File("/home/hugo/Downloads/2a50a6de84db99fb075cacf498ea576791fc3bf5547528dbd444ea3dfe48abc7.jpg"))));
+
+            objIn = new ObjectInputStream(socket.getInputStream());
+            /**
+            try {
+                SimpleObject simpleObject = (SimpleObject) objIn.readObject();
+                System.out.println("The meaning of life is: " + simpleObject.getTheMeaningOfLife());
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+            **/
+            /**
             Commands com = null;
 
             while(serverOnline){
                 try{
-                    com = (Commands)command.readObject();
+                    com = (Commands)objIn.readObject();
                 }
                 catch(Exception e){
                     e.printStackTrace();
@@ -69,6 +87,7 @@ class WorkerThread implements Runnable {
 
                 switch(com){
                     case ACCESS:
+                        searchMeme("/home/hugo/Downloads/DankMemes");
                         sendImage();//TODO let the user search a meme
                         break;
                     case MODIFY:
@@ -83,16 +102,42 @@ class WorkerThread implements Runnable {
                     default:
                         System.out.println("You really shouldn't be here. Probably shot a null value or something.");
                         break;
+
                 }
             }
             out.close();
             in.close();
+
+            }
+            **/
             socket.close();
         }
         catch (IOException e) {
             e.printStackTrace();
         }
 
+    }
+
+    private void searchMeme(String path) throws IOException{
+        File root = new File( path );
+        File[] list = root.listFiles();
+        files = new ArrayList();
+
+        if (list == null){
+            return;
+        }
+
+        for ( File f : list ) {
+            if ( f.isDirectory() ) {
+                searchMeme( f.getAbsolutePath() );
+                System.out.println( "Dir:" + f.getAbsoluteFile() );
+                files.add( "Dir:" + f.getAbsoluteFile() );
+            }
+            else {
+                System.out.println( "" + f.getAbsoluteFile() );
+                files.add( "" + f.getAbsoluteFile() );
+            }
+        }
     }
 
     private void sendImage() {
