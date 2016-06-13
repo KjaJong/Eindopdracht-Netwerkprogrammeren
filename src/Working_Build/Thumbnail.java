@@ -30,6 +30,10 @@ public class Thumbnail implements java.io.Serializable {
         this.path = path;
     }
 
+    public Thumbnail(String path){
+        this.path = path;
+    }
+
     public ImageIcon getThumbnail(){
         ImageIcon thumbnail2 = null;
         try {

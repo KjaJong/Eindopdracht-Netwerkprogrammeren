@@ -81,19 +81,29 @@ class WorkerThread implements Runnable {
                     f.printStackTrace();
                 }
 
-                switch(com){
+                switch(com) {
 
                     case ACCESS: //Access the database by returning the what kind of image question
                         System.out.println("ACCESS");
                         objOut.writeObject(getBrowser());
                         String path = null;
-                        try {
+                        while (path != "stop") {
+                            path = null;
+                            try {
                             path = (String) objIn.readObject();
-                        } catch (ClassNotFoundException e) {
+                                if (path.equals("stop")){
+                                    System.out.println("Caught STOP");
+                                    break;
+                                } else{
+                                    System.out.println(path + " is not the same as: stop");
+                                }
+
+                            } catch (ClassNotFoundException e) {
                             e.printStackTrace();
+                            }
+                            System.out.println("Attempting to send: " + path);
+                            objOut.writeObject(new Meme(ImageIO.read(new File(path)), Categories.TROLL, 0));
                         }
-                        System.out.println("Attempting to send: " + path);
-                        objOut.writeObject(new Meme(ImageIO.read(new File(path)), Categories.TROLL, 0));
                         break;
                     case MODIFY: //Access the database modifier
                         System.out.println("MODIFY");

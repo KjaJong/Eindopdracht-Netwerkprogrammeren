@@ -119,37 +119,7 @@ public class Gui extends JPanel{
 
                 ArrayList<Thumbnail> thumbnails = (ArrayList<Thumbnail>) objIn.readObject();
 
-                JFrame browseFrame = new JFrame("World Meme Database");
-                JPanel browsePanel = new JPanel();
-                browsePanel.setLayout(new GridLayout(5, 5));
-
-
-                JButton[] buttons = new JButton[thumbnails.size()];
-                for(int i = 0; i < buttons.length; i++){
-                    buttons[i] = new JButton();
-                    buttons[i].setIcon(thumbnails.get(i).getThumbnail());
-                    int finalI = i;
-                    buttons[i].addActionListener(event ->{
-                        try{
-                            System.out.println("Image: " + thumbnails.get(finalI).getPath());
-                            objOut.writeObject(thumbnails.get(finalI).getPath());
-                            Meme meme = (Meme) objIn.readObject();
-
-                            DankMemeViewer dankMemeViewer = new DankMemeViewer(meme.getImage(), meme.getImage().getWidth(), meme.getImage().getHeight());
-                        }
-                        catch(Exception ex){
-                            ex.printStackTrace();
-                        }
-                    });
-                    browsePanel.add(buttons[i]);
-                }
-
-
-
-                browseFrame.add(browsePanel);
-                browseFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-                browseFrame.setSize(new Dimension(640, 480));
-                browseFrame.setVisible(true);
+                Browser browser = new Browser(thumbnails, objIn, objOut);
 
             }
             catch(Exception ex){
@@ -190,7 +160,7 @@ public class Gui extends JPanel{
             try{
                 sendCommand(Commands.RICKROLL);
                 BufferedImage img = retrieveImage();
-                DankMemeViewer dankMemeViewer = new DankMemeViewer(img, img.getWidth(), img.getHeight());
+                DankMemeViewer dankMemeViewer = new DankMemeViewer(img, img.getWidth()+10, img.getHeight()+20);
             }
             catch(Exception ex){
                 ex.printStackTrace();
