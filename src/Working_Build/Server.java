@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
 /**
  * Created by hugo on 5/18/16.
@@ -62,7 +63,7 @@ class WorkerThread implements Runnable {
             objOut = new ObjectOutputStream(socket.getOutputStream());
             objOut.flush();
 
-            objOut.writeObject(new Meme(ImageIO.read(new File("/home/hugo/Downloads/2a50a6de84db99fb075cacf498ea576791fc3bf5547528dbd444ea3dfe48abc7.jpg"))));
+            //objOut.writeObject(new Meme(ImageIO.read(new File("/home/hugo/Downloads/2a50a6de84db99fb075cacf498ea576791fc3bf5547528dbd444ea3dfe48abc7.jpg"))));
 
             objIn = new ObjectInputStream(socket.getInputStream());
             /**
@@ -73,25 +74,32 @@ class WorkerThread implements Runnable {
                 e.printStackTrace();
             }
             **/
-            /**
+
             Commands com = null;
 
             while(serverOnline){
                 try{
                     com = (Commands)objIn.readObject();
                 }
-                catch(Exception e){
-                    e.printStackTrace();
+                catch(java.net.SocketException e){
+                    Thread.currentThread().interrupt();
+                    return;
+                } catch(ClassNotFoundException f){
+                    f.printStackTrace();
                 }
 
                 switch(com){
                     case ACCESS: //Access the database by returning the what kind of image question
+                        System.out.println("ACCESS");
                         break;
                     case MODIFY: //Access the database modifier
+                        System.out.println("MODIFY");
                         break;
                     case EXIT: //TODO shutdown client who called exit
+                        System.out.println("EXIT");
                         break;
                     case RICKROLL: //Send rickrolls picture.
+                        System.out.println("Never gonna give you up, never gonna let you down, never gonna run around and hurt you.");
                         break;
                     default: System.out.println("You really shouldn't be here. Probably shot a null value or something.");
                         break;
@@ -99,7 +107,7 @@ class WorkerThread implements Runnable {
                 }
 
             }
-            **/
+
             socket.close();
         }
         catch (IOException e) {

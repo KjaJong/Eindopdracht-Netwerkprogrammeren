@@ -12,7 +12,7 @@ public class Client {
 
     private DataInputStream in;
     private DataOutputStream out;
-    private Socket socket;
+    protected Socket socket;
     private Gui gui;
 
     public static void main(String s[]) throws IOException{
@@ -21,14 +21,14 @@ public class Client {
 
     public Client() throws IOException{
         socket = new Socket("127.0.0.1", 9001);
-        in = new DataInputStream(socket.getInputStream());
-        out = new DataOutputStream(socket.getOutputStream());
+        //in = new DataInputStream(socket.getInputStream());
+        //out = new DataOutputStream(socket.getOutputStream());
         gui = new Gui(this);
         //int aNumber = Integer.parseInt(JOptionPane.showInputDialog("Gimme number"));
         //out.writeDouble(aNumber);
 
         //TODO gui sending requests
-        receiveImage();
+        //receiveImage();
 
         out.close();
         in.close();
