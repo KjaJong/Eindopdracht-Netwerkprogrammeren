@@ -63,7 +63,7 @@ class WorkerThread implements Runnable {
             objOut = new ObjectOutputStream(socket.getOutputStream());
             objOut.flush();
 
-            //objOut.writeObject(new Meme(ImageIO.read(new File("/home/hugo/Downloads/2a50a6de84db99fb075cacf498ea576791fc3bf5547528dbd444ea3dfe48abc7.jpg"))));
+            objOut.writeObject(new Meme(ImageIO.read(new File("/home/hugo/Downloads/2a50a6de84db99fb075cacf498ea576791fc3bf5547528dbd444ea3dfe48abc7.jpg"))));
 
             objIn = new ObjectInputStream(socket.getInputStream());
             /**
