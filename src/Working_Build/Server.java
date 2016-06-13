@@ -3,6 +3,7 @@ package Working_Build;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -42,6 +43,8 @@ class WorkerThread implements Runnable {
 
     private ObjectOutputStream objOut;
     private ObjectInputStream objIn;
+
+    private ArrayList<String> files;
 
     public WorkerThread(Socket socket) {
         this.socket = socket;

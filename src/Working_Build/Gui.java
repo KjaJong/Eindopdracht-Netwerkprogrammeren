@@ -88,7 +88,7 @@ public class Gui extends JPanel{
         startButton.setHorizontalTextPosition(JButton.CENTER);
         startButton.setVerticalTextPosition(JButton.CENTER);
 
-        JButton editButton = new JButton("Add/Remove meme's", buttonImage);
+        JButton editButton = new JButton("Sort Meme's", buttonImage);
         editButton.setFont(new Font("Arial", Font.PLAIN, 20));
         editButton.setForeground(Color.black);
         editButton.setHorizontalTextPosition(JButton.CENTER);
