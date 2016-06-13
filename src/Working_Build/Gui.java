@@ -2,6 +2,7 @@ package Working_Build;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
 
@@ -19,6 +20,8 @@ public class Gui extends JPanel{
     private DataOutputStream out;
     private Socket socket;
     private ObjectOutputStream objOut;
+    private ObjectInputStream objIn;
+    private ImageIcon buttonImage;
 
 
     public Gui(Client client) throws IOException {
@@ -31,6 +34,7 @@ public class Gui extends JPanel{
         guiFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         guiFrame.setSize(new Dimension(640, 480));
         initPanel();
+        buttonImage = null;
         guiFrame.validate();
         guiFrame.setVisible(true);
     }
@@ -51,17 +55,23 @@ public class Gui extends JPanel{
 
     private void initTitlePanel(){
         titlePanel = new JPanel();
-        Font font = new Font("Times New Roman", Font.BOLD, 50);
-        JLabel label = new JLabel("Image and Text");
-        label.setFont(font);
+        //Font font = new Font("Times New Roman", Font.BOLD, 50);
+        //JLabel label = new JLabel("Image and Text");
+        //label.setFont(font);
+
+        try {
+            titlePanel.add(new JLabel(new ImageIcon(retrieveImage())));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         //label.setText("GENERAL MEME DATABASE");
         //label.setVisible(true);
-        titlePanel.add(label);
 
         add(titlePanel);
     }
 
-    private void initDiaPanel(){
+    private void initDiaPanel() {
         diaPanel = new JPanel();
         //TODO add the dia functionality
         add(diaPanel);
@@ -72,27 +82,28 @@ public class Gui extends JPanel{
         buttonPanel.setLayout(new GridLayout(4, 1));
 
         //<editor-fold desc="Button generation. Hiding all the auto code down here.">
-        JButton startButton = new JButton("Access to database.", new ImageIcon("src/Resources/Miku.jpg"));
+        JButton startButton = new JButton("Access to database.", buttonImage);
         startButton.setFont(new Font("Arial", Font.PLAIN, 20));
-        startButton.setForeground(Color.white);
+        startButton.setForeground(Color.black);
         startButton.setHorizontalTextPosition(JButton.CENTER);
         startButton.setVerticalTextPosition(JButton.CENTER);
 
-        JButton editButton = new JButton("Add/Remove meme's", new ImageIcon("src/Resources/Miku.jpg"));
+        JButton editButton = new JButton("Add/Remove meme's", buttonImage);
         editButton.setFont(new Font("Arial", Font.PLAIN, 20));
-        editButton.setForeground(Color.white);
+        editButton.setForeground(Color.black);
         editButton.setHorizontalTextPosition(JButton.CENTER);
         editButton.setVerticalTextPosition(JButton.CENTER);
 
-        JButton exitButton = new JButton("Exit database", new ImageIcon("src/Resources/Miku.jpg"));
+        JButton exitButton = new JButton("Exit database", buttonImage);
         exitButton.setFont(new Font("Arial", Font.PLAIN, 20));
-        exitButton.setForeground(Color.white);
+        exitButton.setForeground(Color.black);
         exitButton.setHorizontalTextPosition(JButton.CENTER);
         exitButton.setVerticalTextPosition(JButton.CENTER);
 
-        JButton mysteryButton = new JButton("Not a rick roll.", new ImageIcon("src/Resources/Miku.jpg"));
+
+        JButton mysteryButton = new JButton("Not a rick roll.", buttonImage);
         mysteryButton.setFont(new Font("Arial", Font.PLAIN, 20));
-        mysteryButton.setForeground(Color.white);
+        mysteryButton.setForeground(Color.black);
         mysteryButton.setHorizontalTextPosition(JButton.CENTER);
         mysteryButton.setVerticalTextPosition(JButton.CENTER);
 
@@ -116,7 +127,8 @@ public class Gui extends JPanel{
 
         exitButton.addActionListener(e ->{
             try{
-                sendCommand(Commands.EXIT);
+                socket.close();
+                System.exit(0);
             }
             catch(Exception ex){
                 ex.printStackTrace();
@@ -170,5 +182,16 @@ public class Gui extends JPanel{
     private void initObjectStream() throws IOException {
         objOut = new ObjectOutputStream(socket.getOutputStream());
         objOut.flush();
+    }
+
+    private BufferedImage retrieveImage() throws IOException {
+        objIn = new ObjectInputStream(socket.getInputStream());
+        try {
+            Meme meme = (Meme) objIn.readObject();
+            return meme.getImage();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
